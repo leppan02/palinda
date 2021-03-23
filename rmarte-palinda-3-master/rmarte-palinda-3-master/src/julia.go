@@ -11,6 +11,7 @@ import (
 	"math/cmplx"
 	"os"
 	"strconv"
+	"sync"
 )
 
 type ComplexFunc func(complex128) complex128
@@ -47,19 +48,27 @@ func CreatePng(filename string, f ComplexFunc, n int) (err error) {
 }
 
 // Julia returns an image of size n x n of the Julia set for f.
+
 func Julia(f ComplexFunc, n int) image.Image {
 	bounds := image.Rect(-n/2, -n/2, n/2, n/2)
 	img := image.NewRGBA(bounds)
 	s := float64(n / 4)
-	for i := bounds.Min.X; i < bounds.Max.X; i++ {
-		for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
-			n := Iterate(f, complex(float64(i)/s, float64(j)/s), 256)
-			r := uint8(0)
-			g := uint8(0)
-			b := uint8(n % 32 * 8)
-			img.Set(i, j, color.RGBA{r, g, b, 255})
-		}
+	gg := new(sync.WaitGroup)
+	for gi := bounds.Min.X; gi < bounds.Max.X; gi++ {
+		gg.Add(1)
+		go func(i int, g *sync.WaitGroup) {
+			for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
+				n := Iterate(f, complex(float64(i)/s, float64(j)/s), 256)
+				r := uint8(0)
+				g := uint8(0)
+				b := uint8(n % 32 * 8)
+				img.Set(i, j, color.RGBA{r, g, b, 255})
+			}
+			g.Done()
+		}(gi, gg)
 	}
+	gg.Wait()
+
 	return img
 }
 
