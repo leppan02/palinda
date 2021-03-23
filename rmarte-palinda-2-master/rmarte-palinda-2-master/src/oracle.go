@@ -42,9 +42,25 @@ func main() {
 // The oracle also prints sporadic prophecies to stdout even without being asked.
 func Oracle() chan<- string {
 	questions := make(chan string)
+	go func() {
+		for q := range questions {
+			go func() {
+				answer := make(chan string)
+				go func() {
+					fmt.Println(<-answer)
+					var a [2]string
+					a[0] = "Yes"
+					a[1] = "No"
+					fmt.Println(a[rand.Intn(2)])
+				}()
+				prophecy(q, answer)
+			}()
+		}
+	}()
 	// TODO: Answer questions.
 	// TODO: Make prophecies.
 	// TODO: Print answers.
+
 	return questions
 }
 
@@ -71,6 +87,7 @@ func prophecy(question string, answer chan<- string) {
 		"The sun is bright.",
 	}
 	answer <- longestWord + "... " + nonsense[rand.Intn(len(nonsense))]
+	fmt.Println("return")
 }
 
 func init() { // Functions called "init" are executed before the main function.
