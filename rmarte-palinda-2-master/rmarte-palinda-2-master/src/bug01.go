@@ -6,6 +6,6 @@ import "fmt"
 func main() {
 	ch := make(chan string)
 	// ch waits for receiver
-	go func() {ch <- "Hello world!"}()
+	go func() { ch <- "Hello world!" }()
 	fmt.Println(<-ch)
 }

@@ -8,7 +8,7 @@ import (
 func WordCount(s string) map[string]int {
 	a := strings.Fields(s)
 	b := map[string]int{}
-	for i:=0;i < len(a); i++{
+	for i := 0; i < len(a); i++ {
 		b[a[i]]++
 	}
 	return b
