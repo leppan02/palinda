@@ -62,8 +62,8 @@ Once you are satisfied with the singleworker, move into [mapreduce/words.go](src
 
 |Variant       | Runtime (ms) |
 | ------------ | ------------:|
-| singleworker |          xxx |
-| mapreduce    |          yyy |
+| singleworker |          791 |
+| mapreduce    |          424 |
 
 And with that, you are on your way to Google-scale problems ;-)
 
